@@ -1,0 +1,35 @@
+{
+  "name": "nodered-contrib-azure-cosmosdb",
+  "version": "0.1.0",
+  "description": "Node-red nodes based on the original azure npm library",
+  "main": "index.js",
+  "node-red": {
+    "nodes": {
+      "az-cosmosdb-config": "./az-cosmosdb/az-cosmosdb-config.js",
+      "az-cosmosdb-read": "./az-cosmosdb/az-cosmosdb-read.js",
+      "az-cosmosdb-write": "./az-cosmosdb/az-cosmosdb-write.js"
+    }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rkrishna-1975/nodered-contrib-azure-cosmosdb.git"
+  },
+  "keywords": [
+    "azure",
+    "cosmosdb",
+    "node-red",
+    "nodered"
+  ],
+  "author": "Ramki Ramaswamy",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/rkrishna-1975/nodered-contrib-azure-cosmosdb/issues"
+  },
+  "homepage": "https://github.com/rkrishna-1975/nodered-contrib-azure-cosmosdb#readme",
+  "dependencies": {
+    "@azure/cosmos": "^3.6.2"
+  }
+}

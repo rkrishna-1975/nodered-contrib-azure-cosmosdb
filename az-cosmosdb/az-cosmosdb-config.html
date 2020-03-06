@@ -1,0 +1,32 @@
+<script type="text/javascript">
+    RED.nodes.registerType('az-cosmosdb-config', {
+        category: 'config',
+        defaults: {
+            endpoint: { value: "", required: true },
+            key : { value: "", required: true},
+            name: { value: "", required: true }
+        },
+        label: function () {
+            return this.name || this.endpoint || "Azure cosmosdb config";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="az-cosmosdb-config">
+    <div class="form-row">
+        <label for="node-config-input-endpoint"><i class="icon-bookmark"></i>Endpoint</label>
+        <input type="text" id="node-config-input-endpoint" placeholder="https://localhost:8081">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-key"><i class="icon-bookmark"></i>Endpoint</label>
+        <input type="text" id="node-config-input-key" placeholder="">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="icon-bookmark"></i>Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Easy to read name">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="az-cosmosdb-config">
+    <p>This is a global configuration node that stores the connection string for the Azure cosmosdb.</p>
+</script>
