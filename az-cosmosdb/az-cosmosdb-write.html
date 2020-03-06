@@ -13,7 +13,7 @@
         icon: "font-awesome/fa-edit",
         align: 'right',
         label: function() {
-            return this.name||this.databaseId||"CosmosDB upsert";
+            return this.name||this.databaseId+":"+this.containerId||"CosmosDB upsert";
         },
         paletteLabel: "cosmos upsert"
     });

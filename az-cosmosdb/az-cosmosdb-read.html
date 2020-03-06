@@ -13,7 +13,7 @@
         outputs:1,
         icon: "font-awesome/fa-database",
         label: function() {
-            return this.name||this.databaseId||"CosmosDB Read";
+            return this.name||this.databaseId+":"+this.containerId||"CosmosDB Read";
         },
         paletteLabel: function() {
             return "cosmos read"

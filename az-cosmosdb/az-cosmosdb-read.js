@@ -8,7 +8,7 @@ module.exports = function (RED) {
   function AZCosmosDBRead(config) {
     RED.nodes.createNode(this, config);
     var node = this;
-    node.debug("Loaded the Loaded cosmos reader");
+    node.debug("Loaded the cosmos reader");
     const endpoint = RED.nodes.getNode(config.connection).endpoint;
     const key = RED.nodes.getNode(config.connection).key;
     const databaseId = config.databaseId;
@@ -18,27 +18,30 @@ module.exports = function (RED) {
 
     const cosmosClient = new CosmosClient({ endpoint, key });
     
-    node.on('input',(msg) => {
+    node.on('input',(msg, send, done) => {
         try{
+            node.debug("Input event was called");
             const database = cosmosClient.database(msg.databaseId||databaseId);
             const container = database.container(msg.containerId||containerId);
         
             const querySpec = {
                 "query": msg.query||query
             }
-
+            node.debug("About to execute the query" + JSON.stringify(querySpec));
             container.items.query(querySpec).fetchAll().then((response) => {
+                node.debug("Got the response: " + JSON.stringify(response));
                 msg.payload = response.resources;
                 node.send(msg);
+                if (done) { done();}
             }).catch((err) => {
                 msg.error = err;
                 node.send(msg);
-                node.error("Error occured" + err);
+                if (done) { done(err);} else {node.error("Error occured" + err);}
             })
         } catch(err) {
             msg.error = err;
             node.send(msg);
-            node.error("Error occured" + err);
+            if (done) { done(err);} else {node.error("Error occured" + err);}
         }
     });
 

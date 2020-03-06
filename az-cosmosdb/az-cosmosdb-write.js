@@ -18,40 +18,43 @@ module.exports = function (RED) {
 
     const cosmosClient = new CosmosClient({ endpoint, key });
 
-    node.writeToDb = async ((item,container,options) => {
-        const response = await container.items.upsert(item, options);
-        return { item: response.item, statusCode: response.statusCode, substatus: response.substatus};
-    });
+    async function writeToDb(items,container,options,node,msg,done) {
+        var returnResponses = [];
+        for (let item of items) {
+            var returnResponse = { 'item': item};
+            try {
+                node.debug("Writing to the db ");
+                const response = await container.items.upsert(item, options);
+                returnResponse.statusCode = response.statusCode;
+                returnResponse.substatus = response.substatus;
+                node.debug("received response: " + response.statusCode);
+            } catch (err) {
+                returnResponse.error = err;
+                node.debug("Received error");
+            } 
+            returnResponses.push(returnResponse);
+        }
+        msg.payload = returnResponses;
+        node.send(msg);
+        if (done) done();
+    }
     
-    node.on('input',(msg) => {
+    node.on('input',(msg,send,done) => {
         try{
             const database = cosmosClient.database(msg.databaseId||databaseId);
             const container = database.container(msg.containerId||containerId);
-        
+            node.debug("received request to write message to database.");
+            var items = [];
             if (msg.payload instanceof Array) {
-                var returnStatus = [];
-                msg.payload.forEach(item => {
-                    try{
-                        returnStatus.push(node.writeToDb(item,container,{}));
-                    } catch(err) {
-                        returnStatus.push({'item': item, 'error': err});
-                    }                    
-                }); 
-                msg.payload = returnStatus;
+                items = msg.payload;
             } else {
-                var returnStatus;
-                try{
-                    returnStatus = node.writeToDb(item,container,{});
-                } catch(err) {
-                    returnStatus = {'item': item, 'error': err} ;
-                }                    
-                msg.payload = returnStatus;
+                items.push(msg.payload);
             }
-            node.send(msg);
+            writeToDb(items,container,{},node,msg,done);
         } catch(err) {
             msg.error = err;
             node.send(msg);
-            node.error("Error occured" + err);
+            if (done) done(err); else  node.error("Error occured" + err);
         }
     });
 
