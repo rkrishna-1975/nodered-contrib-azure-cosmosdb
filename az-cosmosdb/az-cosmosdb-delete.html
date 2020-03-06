@@ -1,0 +1,100 @@
+<script type="text/javascript">
+    RED.nodes.registerType('az-cosmosdb-delete',{
+        category: 'Azure',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            connection: { value: null, required: true, type: "az-cosmosdb-config"},
+            databaseId : {value: null, required: true},
+            containerId: { value: null, required:true}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "font-awesome/fa-trash",
+        align: 'right',
+        label: function() {
+            return this.name||this.databaseId+":"+this.containerId||"CosmosDB delete";
+        },
+        paletteLabel: "cosmos delete"
+    });
+</script>
+
+<script type="text/html" data-template-name="az-cosmosdb-delete">
+    <div class="form-row">
+        <label for="node-input-connection"><i class="fa fa-tag"></i>Connection</label>
+        <input type="text" id="node-input-connection" >
+    </div>
+    <div class="form-row">
+        <label for="node-input-databaseId"><i class="icon-tag"></i>DatabaseId</label>
+        <input type="text" id="node-input-databaseId" placeholder="databaseId">
+    </div>
+    <div class="form-row">
+        <label for="node-input-containerId"><i class="icon-tag"></i>ContainerId</label>
+        <input type="text" id="node-input-containerId" placeholder="containerId">
+    </div>    
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="az-cosmosdb-delete">
+    <p>This node reads from an azure CosmosDB. It has the following config properties</p>
+    <h3>Configuration</h3>
+    <dl class="message-properties">
+        <dt> Connection 
+            <span class="property-type">Service bus configuration</span>
+        </dt>
+        <dd> You have to select a service bus connection configuration if you have already created one. Else create a new one. This configuration holds the connection string for the endpoint. 
+        </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt> Queue 
+            <span class="property-type">String</span>
+        </dt>
+        <dd> The name of the queue you want to listen from</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt> Concurrency 
+            <span class="property-type">Number</span>
+        </dt>
+        <dd>Number of concurrent messages you want to process. The default is set to 1</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional"> Name 
+            <span class="property-type">String</span>
+        </dt>
+        <dd> This name will show in the flow. If left empty, the flow node will default to show the queue name
+        </dd>
+    </dl>
+    <dl class="message-properties">
+        <dt> Session 
+            <span class="property-type">Boolean</span>
+        </dt>
+        <dd> If the queue is session enabled, please check this box.This will generate a sessionReceiver to handle messgaes from the queue.</dd>
+    </dl>
+    <dl class="message-properties">
+        <dt class="optional"> SessionId
+            <span class="property-type">String</span>
+        </dt>
+        <dd> Please enter a sessionID only if you want the listener to lock to a specific session. If not entered, the receiver will find an available session to connect to.</dd>
+    </dl>
+    <h3>Outputs</h3>
+     <ol class="node-ports">
+         <li>Message Out
+             <dl class="message-properties">
+                 <dt>payload <span class="property-type">string|Object</span></dt>
+                 <dd>This can either have a string representation of the data send in the message body or the Object representation if the body was a JSON object.</dd>
+                 <dt>sbMsg <span class="property-type">Object</span></dt>
+                 <dd>This has the original message object passed by the azure service bus queue. It has other properties like the user properties, delivery information, sessionId, partitionKey etc. Please debug the object to see the details you may need.</dd>
+             </dl>
+         </li>
+     </ol>
+     <h3>Details</h3>
+     <p>This is a Azure service bus queue listner. This can be configured to listen either to a regular queue or a session enabled queue. The listner cannot be turned off and will continually retry if the connection fails or an error occurs.</p>
+ 
+    <h3>References</h3>
+    <ul>
+        <li><a href="https://docs.microsoft.com/en-us/javascript/api/@azure/service-bus?view=azure-node-latest">Microsoft Azure API docs</a> - full description of <code>msg.sbMsg</code> property</li>
+    </ul>
+</script>

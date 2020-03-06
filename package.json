@@ -7,7 +7,8 @@
     "nodes": {
       "az-cosmosdb-config": "./az-cosmosdb/az-cosmosdb-config.js",
       "az-cosmosdb-read": "./az-cosmosdb/az-cosmosdb-read.js",
-      "az-cosmosdb-write": "./az-cosmosdb/az-cosmosdb-write.js"
+      "az-cosmosdb-write": "./az-cosmosdb/az-cosmosdb-write.js",
+      "az-cosmosdb-delete": "./az-cosmosdb/az-cosmosdb-delete.js"
     }
   },
   "scripts": {

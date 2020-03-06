@@ -5,10 +5,10 @@ const Utils = require("../index");
 
 
 module.exports = function (RED) {
-  function AZCosmosDBWrite(config) {
+  function AZCosmosDBDelete(config) {
     RED.nodes.createNode(this, config);
     var node = this;
-    node.debug("Loaded the Loaded cosmos reader");
+    node.debug("Loaded the cosmos delete");
     const endpoint = RED.nodes.getNode(config.connection).endpoint;
     const key = RED.nodes.getNode(config.connection).key;
     const databaseId = config.databaseId;
@@ -17,13 +17,13 @@ module.exports = function (RED) {
 
     const cosmosClient = new CosmosClient({ endpoint, key });
 
-    async function writeToDb(items,container,options,node,msg,done) {
+    async function deleteFromDb(items,container,options,node,msg,done) {
         var returnResponses = [];
         for (let item of items) {
             var returnResponse = { 'item': item};
             try {
-                node.debug("Writing to the db ");
-                const response = await container.items.upsert(item, options);
+                node.debug("Deleting from db ");
+                const response = await container.item(item.id,item.partition_key).delete(options);
                 returnResponse.statusCode = response.statusCode;
                 returnResponse.substatus = response.substatus;
                 node.debug("received response: " + response.statusCode);
@@ -42,14 +42,14 @@ module.exports = function (RED) {
         try{
             const database = cosmosClient.database(msg.databaseId||databaseId);
             const container = database.container(msg.containerId||containerId);
-            node.debug("received request to write message to database.");
+            node.debug("Received request to delete from database.");
             var items = [];
             if (msg.payload instanceof Array) {
                 items = msg.payload;
             } else {
                 items.push(msg.payload);
             }
-            writeToDb(items,container,{},node,msg,done);
+            deleteFromDb(items,container,{},node,msg,done);
         } catch(err) {
             msg.error = err;
             node.send(msg);
@@ -61,5 +61,5 @@ module.exports = function (RED) {
       
     });
   }
-  RED.nodes.registerType("az-cosmosdb-write", AZCosmosDBWrite);
+  RED.nodes.registerType("az-cosmosdb-delete", AZCosmosDBDelete);
 }
